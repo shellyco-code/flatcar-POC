@@ -46,6 +46,7 @@ export const InstanceSortFilters: {
   id: '0',
   ip: '1',
   'last-check': '2',
+  oem: '3',
 };
 
 export function getKeyByValue(object: { [key: string]: any }, value: any) {
