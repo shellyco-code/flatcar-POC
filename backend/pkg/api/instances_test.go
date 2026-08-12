@@ -374,3 +374,28 @@ func TestUpdateInstanceStatsNoArch(t *testing.T) {
 	assert.Equal(t, "1.0.0", instanceStats[0].Version)
 	assert.Equal(t, 1, instanceStats[0].Instances)
 }
+
+func TestGetGroupOEMBreakdown(t *testing.T) {
+	a := newForTest(t)
+	defer a.Close()
+
+	groupID := "7074264a-2070-4b84-96ed-8a269dba5021"
+	breakdown, err := a.GetGroupOEMBreakdown(groupID)
+	assert.NoError(t, err)
+	assert.NotNil(t, breakdown)
+	assert.NotEmpty(t, breakdown)
+
+	var totalPercentage float64
+	var totalInstances int
+	foundUnknown := false
+	for _, entry := range breakdown {
+		totalPercentage += entry.Percentage
+		totalInstances += entry.Instances
+		if entry.OEM == "unknown" {
+			foundUnknown = true
+		}
+	}
+	assert.True(t, foundUnknown, "Expected at least one unknown OEM entry in breakdown")
+	assert.InDelta(t, 100.0, totalPercentage, 0.1)
+	assert.Greater(t, totalInstances, 0)
+}
