@@ -40,6 +40,43 @@ var (
 		},
 	)
 
+	appInstancesByOEMGaugeMetric = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Namespace: "nebraska",
+			Name:      "application_instances_by_oem",
+			Help:      "Number of applications running on instances categorized by OEM platform",
+		},
+		[]string{
+			"application",
+			"oem",
+		},
+	)
+
+	groupRolloutStatusGaugeMetric = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Namespace: "nebraska",
+			Name:      "rollout_in_progress",
+			Help:      "Indicates whether an automated rollout is currently active for a group (1 for active, 0 for idle)",
+		},
+		[]string{
+			"application",
+			"group",
+		},
+	)
+
+	groupInstancesByStatusGaugeMetric = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Namespace: "nebraska",
+			Name:      "group_instances_by_status",
+			Help:      "Number of instances in a group partitioned by Omaha update lifecycle status",
+		},
+		[]string{
+			"application",
+			"group",
+			"status",
+		},
+	)
+
 	openConnections = prometheus.NewGauge(
 		prometheus.GaugeOpts{
 			Namespace: "nebraska",
@@ -67,11 +104,37 @@ var (
 	l = logger.New("nebraska")
 )
 
+func statusName(status int) string {
+	switch status {
+	case 1:
+		return "undefined"
+	case 2:
+		return "update_granted"
+	case 3:
+		return "error"
+	case 4:
+		return "complete"
+	case 5:
+		return "installed"
+	case 6:
+		return "downloaded"
+	case 7:
+		return "downloading"
+	case 8:
+		return "on_hold"
+	default:
+		return "unknown"
+	}
+}
+
 // registerNebraskaMetrics registers the application metrics collector with the DefaultRegistrer.
 func registerNebraskaMetrics() error {
 	collectors := []prometheus.Collector{
 		appInstancePerChannelGaugeMetric,
 		failedUpdatesGaugeMetric,
+		appInstancesByOEMGaugeMetric,
+		groupRolloutStatusGaugeMetric,
+		groupInstancesByStatusGaugeMetric,
 		openConnections,
 		inUseConnections,
 		idleConnections,
@@ -137,6 +200,37 @@ func calculateMetrics(api *api.API) error {
 
 	for _, metric := range aipcMetrics {
 		appInstancePerChannelGaugeMetric.WithLabelValues(metric.ApplicationName, metric.Version, metric.ChannelName).Set(float64(metric.InstancesCount))
+	}
+
+	oemMetrics, err := api.GetAppInstancesByOEMMetrics()
+	if err != nil {
+		return fmt.Errorf("failed to get app instances by oem metrics: %w", err)
+	}
+
+	for _, metric := range oemMetrics {
+		appInstancesByOEMGaugeMetric.WithLabelValues(metric.ApplicationName, metric.OEM).Set(float64(metric.InstancesCount))
+	}
+
+	rolloutMetrics, err := api.GetGroupRolloutMetrics()
+	if err != nil {
+		return fmt.Errorf("failed to get group rollout metrics: %w", err)
+	}
+
+	for _, metric := range rolloutMetrics {
+		val := 0.0
+		if metric.RolloutInProgress {
+			val = 1.0
+		}
+		groupRolloutStatusGaugeMetric.WithLabelValues(metric.ApplicationName, metric.GroupName).Set(val)
+	}
+
+	statusMetrics, err := api.GetGroupInstancesStatusMetrics()
+	if err != nil {
+		return fmt.Errorf("failed to get group instances status metrics: %w", err)
+	}
+
+	for _, metric := range statusMetrics {
+		groupInstancesByStatusGaugeMetric.WithLabelValues(metric.ApplicationName, metric.GroupName, statusName(metric.Status)).Set(float64(metric.InstancesCount))
 	}
 
 	fuMetrics, err := api.GetFailedUpdatesMetrics()

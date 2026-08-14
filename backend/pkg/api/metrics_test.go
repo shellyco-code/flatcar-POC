@@ -84,3 +84,40 @@ func TestGetFailedUpdatesMetrics(t *testing.T) {
 	}
 	require.Equal(t, expectedMetrics, metrics)
 }
+
+func TestGetAppInstancesByOEMMetrics(t *testing.T) {
+	a := newForTest(t)
+	defer a.Close()
+
+	metrics, err := a.GetAppInstancesByOEMMetrics()
+	require.NoError(t, err)
+	require.NotEmpty(t, metrics)
+
+	foundSampleApp := false
+	for _, m := range metrics {
+		if m.ApplicationName == "Sample application" {
+			foundSampleApp = true
+			require.NotEmpty(t, m.OEM)
+			require.Greater(t, m.InstancesCount, 0)
+		}
+	}
+	require.True(t, foundSampleApp, "Expected 'Sample application' in OEM metrics")
+}
+
+func TestGetGroupRolloutMetrics(t *testing.T) {
+	a := newForTest(t)
+	defer a.Close()
+
+	metrics, err := a.GetGroupRolloutMetrics()
+	require.NoError(t, err)
+	require.NotEmpty(t, metrics)
+}
+
+func TestGetGroupInstancesStatusMetrics(t *testing.T) {
+	a := newForTest(t)
+	defer a.Close()
+
+	metrics, err := a.GetGroupInstancesStatusMetrics()
+	require.NoError(t, err)
+	require.NotEmpty(t, metrics)
+}
