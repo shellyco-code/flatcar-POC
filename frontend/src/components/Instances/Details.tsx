@@ -412,6 +412,25 @@ function DetailsView(props: DetailsViewProps) {
                       <Grid size={12}>
                         <Divider className={classes.divider} />
                       </Grid>
+
+                      <Grid container size={12}>
+                        <Grid size={6}>
+                          <CardFeatureLabel>{t('instances|oem')}</CardFeatureLabel>
+                          <Box mt={1}>
+                            <CardLabel>{instance.oem || t('frequent|unknown')}</CardLabel>
+                          </Box>
+                        </Grid>
+                        <Grid size={6}>
+                          <CardFeatureLabel>{t('instances|aleph_version')}</CardFeatureLabel>
+                          <Box mt={1}>
+                            <CardLabel>{instance.aleph_version || t('frequent|none')}</CardLabel>
+                          </Box>
+                        </Grid>
+                      </Grid>
+
+                      <Grid size={12}>
+                        <Divider className={classes.divider} />
+                      </Grid>
                       <Grid container size={12}>
                         <Grid size={6}>
                           <CardFeatureLabel>{t('instances|application')}</CardFeatureLabel>

@@ -91,6 +91,14 @@ function Table(props: {
           >
             {t('instances|ip')}
           </TableCellWithSortButtons>
+          <TableCellWithSortButtons
+            clickHandler={sortHandler}
+            sortQuery={InstanceSortFilters['oem']}
+            defaultIsDescSortOrder={isDescSortOrder}
+            isDefault={sortQuery === InstanceSortFilters['oem']}
+          >
+            {t('instances|oem')}
+          </TableCellWithSortButtons>
           <TableCell>{t('instances|current_status')}</TableCell>
           <TableCell>{t('instances|version')}</TableCell>
           <TableCellWithSortButtons

@@ -109,6 +109,8 @@ export interface Activity {
 export interface Instance {
   id: string;
   alias: string;
+  oem?: string;
+  aleph_version?: string;
   created_ts: string | Date | number;
   ip: string;
   application: InstanceApplication;
@@ -140,6 +142,12 @@ export interface InstanceStatusHistory {
 
 export interface VersionBreakdownEntry {
   version: string;
+  instances: number;
+  percentage: number;
+}
+
+export interface OEMBreakdownEntry {
+  oem: string;
   instances: number;
   percentage: number;
 }

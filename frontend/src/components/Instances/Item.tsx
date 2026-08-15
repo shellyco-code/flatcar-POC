@@ -117,6 +117,11 @@ function Item(props: ItemProps) {
           </Link>
         </TableCell>
         <TableCell>{props.instance.ip}</TableCell>
+        <TableCell>
+          <Box component="span" sx={{ fontSize: '0.85rem', color: 'text.secondary' }}>
+            {props.instance.oem || 'unknown'}
+          </Box>
+        </TableCell>
         <TableCell>{instanceLabel}</TableCell>
         <TableCell>
           <span className={'box--' + versionStyle}>{version}</span>
@@ -139,7 +144,7 @@ function Item(props: ItemProps) {
         </TableCell>
       </StyledTableRow>
       <TableRow>
-        <TableCell padding="none" colSpan={5}>
+        <TableCell padding="none" colSpan={6}>
           <Collapse in={props.selected}>
             <StatusHistoryContainer statusHistory={statusHistory} />
           </Collapse>
