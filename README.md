@@ -1,4 +1,4 @@
-﻿<div align="center">
+<div align="center">
 
 # Flatcar Nebraska — Reporting & Metrics Uplift
 ### CNCF LFX Mentorship Term 3 — Proof of Concept (POC)
@@ -9,6 +9,7 @@
 [![Go Version](https://img.shields.io/badge/Go-1.26.5-00ADD8?logo=go)](https://go.dev/)
 [![React Version](https://img.shields.io/badge/React-19.0-61DAFB?logo=react)](https://react.dev/)
 [![Tests](https://img.shields.io/badge/Vitest-81%2F81%20Passed-brightgreen)](https://vitest.dev/)
+[![Live Demo](https://img.shields.io/badge/Vercel-Live%20Demo-000000?logo=vercel&logoColor=white)](https://flatcar-poc.vercel.app)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 </div>
